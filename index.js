@@ -1,7 +1,7 @@
 import readline from 'readline';
 import { retrieveUserName } from './src/retrieveUserName.js';
 import { printCurrentWorkingDirectory, changeDirectory, listDirectoryContents } from './src/directoryOperations/index.js'
-import { read, create, rename, remove } from './src/fileOperations/index.js'
+import { read, create, rename, remove, copy, move } from './src/fileOperations/index.js'
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -16,10 +16,11 @@ const goodByeMsg = `Thank you for using File Manager, ${userName}, goodbye!`;
 console.log(greetingsMsg);
 printCurrentWorkingDirectory();
 
- const handleInput = async (input) => {
+const handleInput = async (input) => {
     switch (input) {
         case '.exit':
             rl.close();
+            console.log(goodByeMsg);
             break;
         case 'up':
             const successUp = changeDirectory('..');
@@ -57,7 +58,28 @@ printCurrentWorkingDirectory();
                     rename(srcFileName, destFileName);
                     printCurrentWorkingDirectory();
                 }
-            } else if (input.startsWith("rm ")) {
+            } else if (input.startsWith("cp ")) {
+                const args = input.slice(3).trim().split(/\s+/);
+                if (args.length < 2) {
+                    console.log("Operation failed.");
+                } else {
+                    const srcFileName = args[0];
+                    const destFileName = args[1];
+                    copy(srcFileName, destFileName);
+                    printCurrentWorkingDirectory();
+                }
+            } else if (input.startsWith("mv ")) {
+                const args = input.slice(3).trim().split(/\s+/);
+                if (args.length < 2) {
+                    console.log("Operation failed.");
+                } else {
+                    const srcFileName = args[0];
+                    const destFileName = args[1];
+                    move(srcFileName, destFileName);
+                    printCurrentWorkingDirectory();
+                }
+            }
+            else if (input.startsWith("rm ")) {
                 const target = input.slice(3).trim();
                 remove(target);
                 printCurrentWorkingDirectory();
@@ -74,6 +96,7 @@ rl.on('line', async (data) => {
 });
 
 rl.on('SIGINT', () => {
+    console.log(goodByeMsg);
     rl.close();
 });
 
