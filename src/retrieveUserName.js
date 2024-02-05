@@ -4,7 +4,8 @@ const retrieveUserName = () => {
         let name = arg[0].replace(/^.*=/, '');
         return name;
     } catch (err) {
-        throw new Error("Error happened. Please type your name in format --username={{name}}")
+        console.log("Operation failed. Please type your name in format --username={{name}}")
+        return "default username"
     }
 
 };
